@@ -1,8 +1,8 @@
 package client
 
 import (
-	"federated-learning/dataset"
-	"federated-learning/model"
+	"github.com/Godwinh19/federated-learning/dataset"
+	"github.com/Godwinh19/federated-learning/model"
 )
 
 // Client represents a client participating in the federated learning system

@@ -1,9 +1,9 @@
 package server
 
 import (
-	"federated-learning/aggregator"
-	"federated-learning/client"
-	"federated-learning/model"
+	"github.com/Godwinh19/federated-learning/aggregator"
+	"github.com/Godwinh19/federated-learning/client"
+	model "github.com/Godwinh19/federated-learning/model"
 )
 
 // Server represents the central server in the federated learning system

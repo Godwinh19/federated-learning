@@ -1,6 +1,6 @@
 package main
 
-import "federated-learning/model"
+import "github.com/Godwinh19/federated-learning/model"
 
 func main() {
 	model.Net()
