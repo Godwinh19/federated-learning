@@ -8,9 +8,9 @@ import (
 
 // Server represents the central server in the federated learning system
 type Server struct {
-	ID         int
-	Clients    []*client.Client
-	GlobalData *client.Client
+	ID          int
+	Clients     []*client.Client
+	GlobalModel *model.Model
 }
 
 // AggregateModels aggregates the models received from the clients

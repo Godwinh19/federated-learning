@@ -2,21 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/Godwinh19/federated-learning/client"
 	"github.com/Godwinh19/federated-learning/model"
 	"log"
 	"net/http"
 )
-
-func trainClients(clientDataChan chan []float64) {
-	for clientData := range clientDataChan {
-		go func(data []float64) {
-			// train the client data here
-			// ...
-			fmt.Println("Trained client data:", data)
-		}(clientData)
-	}
-}
 
 func handleTrain(w http.ResponseWriter, r *http.Request) {
 	// Parse request body to get the client's data
@@ -28,7 +18,10 @@ func handleTrain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Train the model with the client's data
-	model.Net()
+	clients := []client.Client{
+		{ID: 1, Model: &model.Model{Id: 1}},
+	}
+	trainClients(clients)
 
 	// Send a response back to the client
 	w.WriteHeader(http.StatusOK)

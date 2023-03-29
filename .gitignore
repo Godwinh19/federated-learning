@@ -22,3 +22,4 @@ go.work
 *.mod
 *.sum
 .idea/
+*_data.json

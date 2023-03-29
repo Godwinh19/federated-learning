@@ -11,6 +11,6 @@ func LoadIrisData(filename string) (x, y tensor.Tensor) {
 	var data, _ = filepath.Abs(filename)
 	records := utils.ReadCsvFile(data)
 	x, y, _ = utils.SplitXandY(records)
-	fmt.Println(x.Shape(), y.Shape())
+	fmt.Println("Shape of dataset: ", x.Shape(), y.Shape())
 	return
 }

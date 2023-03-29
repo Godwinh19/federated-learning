@@ -7,9 +7,19 @@ import (
 	"github.com/Godwinh19/gotorch/torch/nn"
 	t "github.com/Godwinh19/gotorch/torch/tensor"
 	"os"
+	"strconv"
 )
 
-func Net(args ...t.Tensor) {
+type nestedType map[string]map[string]t.Tensor
+
+type Model struct {
+	Id       int
+	Params   nestedType
+	Loss     float64
+	Accuracy float64
+}
+
+func (m *Model) Net(args ...t.Tensor) {
 	var x, y t.Tensor
 	switch len(args) {
 	case 0:
@@ -53,19 +63,33 @@ func Net(args ...t.Tensor) {
 		optim.Step(net)
 		optim.Lr = scheduler.Next()
 
-		if i%5 == 0 {
-			fmt.Println(currentLoss)
+		if i%10 == 0 {
+			// fmt.Println(currentLoss)
 		}
 	}
 	// saving the weights
-	fmt.Printf("\nParams for layers %v\n", params)
-	saveToJson(params)
+	//fmt.Printf("\nParams for layers %v\n", params)
+	m.saveToJson(params)
+	m.jsonToInterface(strconv.Itoa(m.Id) + "_data.json")
+	m.Loss = currentLoss
+
 }
 
-func saveToJson(weights interface{}) {
+func (m *Model) saveToJson(weights interface{}) {
 	data, err := json.Marshal(weights)
 	if err != nil {
 		fmt.Println(err)
 	}
-	err = os.WriteFile("data.json", data, 0644)
+	err = os.WriteFile(strconv.Itoa(m.Id)+"_data.json", data, 0644)
+}
+
+func (m *Model) jsonToInterface(filename string) {
+	var dataMap nestedType
+	jsonData, _ := os.ReadFile(filename)
+	err := json.Unmarshal([]byte(jsonData), &dataMap)
+	if err != nil {
+		panic(err)
+	}
+
+	m.Params = dataMap
 }
