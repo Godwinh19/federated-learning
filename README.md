@@ -5,7 +5,7 @@
 This is a Golang library for implementing federated learning, a machine learning approach that allows multiple 
 parties to collaboratively train a model without sharing their data.
 
-<div style="text-align:center"><img src="./flow.png" alt="Flowchart"></div>
+<div style="text-align:center"><img src="./flowchart.png" alt="Flowchart"></div>
 
 ## Usage
 
