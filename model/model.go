@@ -7,16 +7,15 @@ import (
 	"github.com/Godwinh19/gotorch/torch/nn"
 	t "github.com/Godwinh19/gotorch/torch/tensor"
 	"os"
-	"strconv"
 )
 
 type nestedType map[string]map[string]t.Tensor
 
 type Model struct {
-	Id       int
-	Params   nestedType
-	Loss     float64
-	Accuracy float64
+	Id       string     `json:"id"`
+	Params   nestedType `json:"params"`
+	Loss     float64    `json:"loss"`
+	Accuracy float64    `json:"accuracy"`
 }
 
 func (m *Model) Net(args ...t.Tensor) {
@@ -70,7 +69,7 @@ func (m *Model) Net(args ...t.Tensor) {
 	// saving the weights
 	//fmt.Printf("\nParams for layers %v\n", params)
 	m.saveToJson(params)
-	m.jsonToInterface(strconv.Itoa(m.Id) + "_data.json")
+	m.jsonToInterface(m.Id + "_data.json")
 	m.Loss = currentLoss
 
 }
@@ -80,7 +79,7 @@ func (m *Model) saveToJson(weights interface{}) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	err = os.WriteFile(strconv.Itoa(m.Id)+"_data.json", data, 0644)
+	err = os.WriteFile(m.Id+"_data.json", data, 0644)
 }
 
 func (m *Model) jsonToInterface(filename string) {

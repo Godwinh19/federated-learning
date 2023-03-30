@@ -2,13 +2,15 @@ package client
 
 import (
 	"github.com/Godwinh19/federated-learning/model"
+	"net/url"
 )
 
 // Client represents a client participating in the federated learning system
 type Client struct {
-	ID    int
-	Model *model.Model
-	Loss  float64
+	ID    string       `json:"id"`
+	Model *model.Model `json:"model"`
+	Loss  float64      `json:"loss"`
+	Url   url.URL      `json:"url"`
 }
 
 // Train trains the client's model on the client's dataset
