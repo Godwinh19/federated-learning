@@ -2,7 +2,6 @@ package aggregator
 
 import (
 	"github.com/Godwinh19/federated-learning/model"
-	"github.com/Godwinh19/gotorch/torch/tensor"
 )
 
 // convert slice to channel
@@ -22,7 +21,7 @@ func sliceToChannel(numb []float64) <-chan float64 {
 // received from the clients and returns a new model with these weights
 func AggregateModels(models []*model.Model) *model.Model {
 	// Initialize channel to receive parameters from each model
-	W := make(chan tensor.Tensor, len(models))
+	/*W := make(chan tensor.Tensor, len(models))
 	b := make(chan tensor.Tensor, len(models))
 
 	// Collect parameters from each model in separate goroutine
@@ -43,6 +42,7 @@ func AggregateModels(models []*model.Model) *model.Model {
 	done := make(chan bool)
 	// Wait for aggregation to complete
 	<-done
+	*/
 
 	return &model.Model{}
 }

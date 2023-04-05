@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/Godwinh19/federated-learning/client"
 	"github.com/Godwinh19/federated-learning/model"
+	"github.com/Godwinh19/federated-learning/server"
 	"log"
 	"net/http"
 )
@@ -19,9 +20,9 @@ func handleTrain(w http.ResponseWriter, r *http.Request) {
 
 	// Train the model with the client's data
 	clients := []client.Client{
-		{ID: 1, Model: &model.Model{Id: 1}},
+		{ID: "c1", Model: &model.Model{Id: "cm1"}},
 	}
-	trainClients(clients)
+	server.TrainClients(clients)
 
 	// Send a response back to the client
 	w.WriteHeader(http.StatusOK)
