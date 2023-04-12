@@ -25,10 +25,11 @@ func multipleTraining() {
 		{ID: "client2", Model: &model.Model{Id: "mc2"}},
 		{ID: "client3", Model: &model.Model{Id: "mc3"}},
 	}
-	lossChan := server.TrainClients(clients)
+	s := server.Server{Clients: clients}
+	lossChan := s.TrainClients()
 
 	for l := range lossChan {
-		fmt.Println(l)
+		fmt.Println(l.Loss)
 	}
 }
 

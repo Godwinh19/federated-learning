@@ -14,7 +14,7 @@ import (
 type Server struct {
 	ID          string
 	Clients     []client.Client
-	GlobalModel *model.Model
+	GlobalModel model.Model
 }
 
 var server = Server{
@@ -24,7 +24,7 @@ var server = Server{
 		{ID: "client2", Model: &model.Model{Id: "mc2"}},
 		{ID: "client3", Model: &model.Model{Id: "mc3"}},
 	},
-	GlobalModel: &model.Model{
+	GlobalModel: model.Model{
 		Id: "globalModel"},
 }
 
@@ -40,17 +40,18 @@ func getServer(c *gin.Context) {
 }
 
 // TrainClients We can train clients model concurrently
-func TrainClients(clientDataChan []client.Client) <-chan float64 {
-	out := make(chan float64)
+func (s *Server) TrainClients() <-chan client.Client {
+	out := make(chan client.Client)
 	var wg sync.WaitGroup
-	for _, c := range clientDataChan {
+	for _, c := range s.Clients {
 		wg.Add(1)
 		go func(currentClient client.Client) {
 			defer wg.Done()
 			fmt.Println("Start training for client: ", currentClient.ID)
-			loss := currentClient.Train()
+			_ = currentClient.Train()
+			//log.Printf("From currennn %v", currentClient.Model.Params)
 			fmt.Println("End training for client: ", currentClient.ID)
-			out <- loss
+			out <- currentClient
 		}(c)
 	}
 	go func() {
@@ -64,8 +65,15 @@ func startClientTraining(c *gin.Context) {
 	//get a client and load the train process. At the end,
 	//send its params
 
-	_ = TrainClients(server.Clients)
-	server.GlobalModel = server.AggregateModels()
+	clientsChan := server.TrainClients()
+	idx := 0
+	for c := range clientsChan {
+		server.Clients[idx] = c
+		idx++
+	}
+
+	server.GlobalModel = *server.AggregateModels()
+	fmt.Println(server.GlobalModel)
 
 	c.IndentedJSON(http.StatusOK, "Training finished")
 }

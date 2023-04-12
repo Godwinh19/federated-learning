@@ -9,11 +9,11 @@ import (
 	"os"
 )
 
-type nestedType map[string]map[string]t.Tensor
+type NestedType map[string]map[string]t.Tensor
 
 type Model struct {
 	Id       string     `json:"id"`
-	Params   nestedType `json:"params"`
+	Params   NestedType `json:"params"`
 	Loss     float64    `json:"loss"`
 	Accuracy float64    `json:"accuracy"`
 }
@@ -71,7 +71,6 @@ func (m *Model) Net(args ...t.Tensor) {
 	m.saveToJson(params)
 	m.jsonToInterface(m.Id + "_data.json")
 	m.Loss = currentLoss
-
 }
 
 func (m *Model) saveToJson(weights interface{}) {
@@ -83,7 +82,7 @@ func (m *Model) saveToJson(weights interface{}) {
 }
 
 func (m *Model) jsonToInterface(filename string) {
-	var dataMap nestedType
+	var dataMap NestedType
 	jsonData, _ := os.ReadFile(filename)
 	err := json.Unmarshal([]byte(jsonData), &dataMap)
 	if err != nil {
