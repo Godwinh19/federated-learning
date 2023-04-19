@@ -34,7 +34,6 @@ func multipleTraining() {
 }
 
 func main() {
-	oneModel()
 	server.Run()
 
 }
