@@ -49,7 +49,6 @@ func (s *Server) TrainClients() <-chan client.Client {
 			defer wg.Done()
 			fmt.Println("Start training for client: ", currentClient.ID)
 			_ = currentClient.Train()
-			//log.Printf("From currennn %v", currentClient.Model.Params)
 			fmt.Println("End training for client: ", currentClient.ID)
 			out <- currentClient
 		}(c)

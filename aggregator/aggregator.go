@@ -3,61 +3,62 @@ package aggregator
 import (
 	"github.com/Godwinh19/federated-learning/model"
 	t "github.com/Godwinh19/gotorch/torch/tensor"
-	"log"
 	"sync"
 )
-
-// convert slice to channel
-func sliceToChannel(numb []float64) <-chan float64 {
-	out := make(chan float64)
-	go func() {
-		for _, n := range numb {
-			out <- n
-		}
-		close(out)
-	}()
-	return out
-
-}
 
 // AggregateModels calculates the average of the model weights
 // received from the clients and returns a new model with these weights
 func AggregateModels(models []*model.Model) *model.Model {
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
-	sumParams := models[0].Params
+	sumParams := &models[0].Params // initialize the params with the first model values
 	count := float64(len(models))
-	//log.Printf("values %v", sumParams["1"]["b"])
 
 	// Create a Goroutine for each model in the list
 	for _, clientModel := range models {
 		wg.Add(1)
-		go func(m model.Model) {
+		go func(clientModel *model.Model) {
 			defer wg.Done()
 
 			// Compute the sum of values for each key in the Params map
-			for idx, param := range m.Params {
+			for idx, param := range clientModel.Params {
 				for key, value := range param {
-					log.Printf("key, value %v", param)
+					//log.Printf("idx, key, value %v %v %v", idx, key, value)
 					mutex.Lock()
-					//log.Printf("values %v %v", sumParams[idx][key], value)
-					sumParams[idx][key] = t.TensorOpsTensor(value, value, "+")
-					//log.Printf("The value of idx, key is %s %s %v", idx, key, sumParams[idx][key])
+					//if _, ok := (*sumParams)[idx][key]; !ok {
+					//	(*sumParams)[idx] = make(map[string]t.Tensor)
+					//	(*sumParams)[idx][key] = value
+					//	log.Printf("Actual sumparams %v %v", idx, key)
+					//}
+					(*sumParams)[idx][key] = add((*sumParams)[idx][key], value)
 					mutex.Unlock()
 				}
 			}
-		}(*clientModel)
+		}(clientModel)
 	}
 
 	// Wait for all Goroutines to finish before dividing the sum by count
 	wg.Wait()
 
 	// Divide the sum of each key by the count to get the mean value
-	for idx, param := range sumParams {
-		for key, _ := range param {
-			sumParams[idx][key] = t.TensorOpsScalar(sumParams[idx][key], count, "/")
+	for idx, param := range *sumParams {
+		for key := range param {
+			(*sumParams)[idx][key] = t.TensorOpsScalar((*sumParams)[idx][key], count, "/")
 		}
 	}
-	log.Printf("The value of sumParams %v", sumParams)
-	return &model.Model{Id: "AggregatedM", Params: sumParams}
+	return &model.Model{Id: "AggregatedM", Params: *sumParams}
+}
+
+func add(a, b t.Tensor) t.Tensor {
+	rows := len(a.Data)
+	cols := len(a.Data[0])
+	result := t.Zeros(rows, cols)
+
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			result.Data[i][j] = a.Data[i][j] + b.Data[i][j]
+		}
+	}
+
+	return result
 }
