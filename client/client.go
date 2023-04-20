@@ -2,6 +2,8 @@ package client
 
 import (
 	"github.com/Godwinh19/federated-learning/model"
+	"github.com/gin-gonic/gin"
+	"net/http"
 	"net/url"
 )
 
@@ -24,4 +26,46 @@ func (c *Client) Train() *Client {
 // calculates the loss of the model
 func (c *Client) Evaluate() {
 	c.Loss = c.Model.Loss
+}
+
+func welcome(c *gin.Context) {
+	//get a client and load the train process. At the end,
+	//send its params
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"client": "Client server",
+	})
+}
+
+func trainHandler(c *gin.Context) {
+	//name := c.Query("name")
+	clientId := c.Query("clientId")
+	modelId := c.Query("modelId")
+
+	_client := Client{
+		ID: clientId,
+		Model: &model.Model{
+			Id: modelId,
+		},
+	}
+	_client.Train()
+	_client.Url = url.URL{
+		Scheme: "http",
+		Host:   "localhost:8080",
+		Path:   "/train",
+	}
+
+	c.Set(_client.ID, _client)
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"_client": _client,
+	})
+}
+
+func Run() {
+	r := gin.Default()
+	r.GET("/", welcome)
+	r.GET("/train", trainHandler)
+
+	r.Run("localhost:8080")
 }

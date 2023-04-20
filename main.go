@@ -18,22 +18,25 @@ func oneModel() {
 
 }
 
-func multipleTraining() {
-	// Train the model with the client's data
-	clients := []client.Client{
-		{ID: "client1", Model: &model.Model{Id: "mc1"}},
-		{ID: "client2", Model: &model.Model{Id: "mc2"}},
-		{ID: "client3", Model: &model.Model{Id: "mc3"}},
-	}
-	s := server.Server{Clients: clients}
-	lossChan := s.TrainClients()
-
-	for l := range lossChan {
-		fmt.Println(l.Loss)
-	}
-}
+//func multipleTraining() {
+//	// Train the model with the client's data
+//	clients := []client.Client{
+//		{ID: "client1", Model: &model.Model{Id: "mc1"}, Url: url.URL{Path: "http://localhost:8080"}},
+//		{ID: "client2", Model: &model.Model{Id: "mc2"}, Url: url.URL{Path: "http://localhost:8080"}},
+//		{ID: "client3", Model: &model.Model{Id: "mc3"}, Url: url.URL{Path: "http://localhost:8080"}},
+//	}
+//	s := server.Server{Clients: clients}
+//	lossChan := s.TrainClients()
+//
+//	for l := range lossChan {
+//		fmt.Println(l.Loss)
+//	}
+//}
 
 func main() {
-	server.Run()
+	go client.Run()
+	go server.Run()
+	var input string
+	fmt.Scanln(&input)
 
 }
