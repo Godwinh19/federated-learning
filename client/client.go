@@ -14,10 +14,10 @@ type Client struct {
 }
 
 // Train trains the client's model on the client's dataset
-func (c *Client) Train() float64 {
+func (c *Client) Train() *Client {
 	c.Model.Net()
 	c.Evaluate()
-	return c.Loss
+	return c
 }
 
 // Evaluate evaluates the client's model on the client's dataset and

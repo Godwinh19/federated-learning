@@ -36,7 +36,9 @@ func getServer(c *gin.Context) {
 	//get a client and load the train process. At the end,
 	//send its params
 
-	c.IndentedJSON(http.StatusOK, server)
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"server info": server,
+	})
 }
 
 // TrainClients We can train clients model concurrently
@@ -74,7 +76,9 @@ func startClientTraining(c *gin.Context) {
 	server.GlobalModel = *server.AggregateModels()
 	fmt.Println(server.GlobalModel)
 
-	c.IndentedJSON(http.StatusOK, "Training finished")
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"message": "Training finished",
+	})
 }
 
 // AggregateModels aggregates the models received from the clients
