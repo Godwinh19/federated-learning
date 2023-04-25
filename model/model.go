@@ -55,7 +55,7 @@ func (m *Model) Net(args ...t.Tensor) {
 		loss.Predicted = output
 		grad = nn.Gradient(loss)
 
-		currentLoss = float64(nn.Loss(loss).Data[0][0])
+		currentLoss = float64(nn.Loss(loss).Data[0])
 		net.Backward(grad)
 
 		// Adjust learning weights
@@ -67,7 +67,7 @@ func (m *Model) Net(args ...t.Tensor) {
 		}
 	}
 	// saving the weights
-	//fmt.Printf("\nParams for layers %v\n", params)
+	fmt.Printf("\nParams for layers %v\n", params)
 	m.saveToJson(params)
 	m.jsonToInterface(m.Id + "_data.json")
 	m.Loss = currentLoss

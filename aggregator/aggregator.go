@@ -43,22 +43,18 @@ func AggregateModels(models []*model.Model) *model.Model {
 	// Divide the sum of each key by the count to get the mean value
 	for idx, param := range *sumParams {
 		for key := range param {
-			(*sumParams)[idx][key] = t.TensorOpsScalar((*sumParams)[idx][key], count, "/")
+			(*sumParams)[idx][key] = *t.TensorOpsScalar((*sumParams)[idx][key], count, "/")
 		}
 	}
 	return &model.Model{Id: "AggregatedM", Params: *sumParams}
 }
 
 func add(a, b t.Tensor) t.Tensor {
-	rows := len(a.Data)
-	cols := len(a.Data[0])
-	result := t.Zeros(rows, cols)
+	result := t.Zeros(a.Dim)
 
-	for i := 0; i < rows; i++ {
-		for j := 0; j < cols; j++ {
-			result.Data[i][j] = a.Data[i][j] + b.Data[i][j]
-		}
+	for i, _ := range a.Data {
+		result.Data[i] = a.Data[i] + b.Data[i]
 	}
 
-	return result
+	return *result
 }
